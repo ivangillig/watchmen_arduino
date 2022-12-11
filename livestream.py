@@ -31,9 +31,11 @@ while True:
         cv2.rectangle(img,(x,y),(x+w,y+h),(0,0,255),3)
         roi_gray = gray[y:y+h, x:x+w]
         roi_color = img[y:y+h, x:x+w]
+
+        img_h, img_w, img_c = img.shape
         
-        x = round(maprange([0,500],[40,0], (x+w//2)))
-        y = round(maprange([1,380],[0,40], (y+h//2)))
+        x = round(maprange([0,img_w],[40,0], (x+w//2))) #0 es a la izquierda
+        y = round(maprange([0,img_h],[40,0], (y+h//2))) #0 es abajo
 
         string='{0:d},{1:d}'.format(x,y)
         arduino.write(bytes(string, 'utf-8'))
@@ -45,6 +47,8 @@ while True:
         #print('data from arduino:'+data)
         
     img = cv2.flip(img, 1)
+
+    cv2.namedWindow("live transmission", cv2.WINDOW_NORMAL)
     cv2.imshow("live transmission",img)
     key=cv2.waitKey(5)
     if key==ord('q'):
