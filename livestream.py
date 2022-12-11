@@ -42,9 +42,9 @@ while True:
         #print(string.encode('utf-8'))
 
         #for testing purpose
-        #data = str(arduino.readline())
-        #time.sleep(0.05)
-        #print('data from arduino:'+data)
+        data = str(arduino.readline())
+        time.sleep(0.05)
+        print('data from arduino:'+data)
         
     img = cv2.flip(img, 1)
 

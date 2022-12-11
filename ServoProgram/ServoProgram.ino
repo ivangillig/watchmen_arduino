@@ -19,7 +19,7 @@ String x;
 char *ejes[2];
 char *separador = NULL;
 
-int in;
+int segundos = 0;
 //#############################
 
 int ojo_izq_x = 0;
@@ -43,6 +43,8 @@ void setup() {
   setServo(2, 29);
   setServo(4, 17);
   setServo(6, 22);
+  //setServo(8, 40);
+  //setServo(10, 0);
 
 }
 
@@ -51,7 +53,6 @@ void setServo(uint8_t n_servo, int angulo) {
   duty = map(angulo, 0, 180, SERVOMIN, SERVOMAX);
   pwm.setPWM(n_servo, 0, duty);
 }
-//el ojo izquierdo gira maximo hasta 30° en el eje X - servo 0 y hasta 45 en el eje Y
 
 void loop() {
 
@@ -63,8 +64,6 @@ void loop() {
       //ojo derecho va de 0 a 35 - 15 default en el X || de 0 a 45 en el Y
       // el parpado superior va de 0 a 130 - 90 default
       // el parpado inferior de 30 a 120 - 90 default
-      
-    
 
     byte index = 0;
     separador = strtok(x.c_str(), ",");  // delimiter
@@ -75,11 +74,11 @@ void loop() {
       separador = strtok(NULL, ",");
     }
   
-    Serial.print("Eje X: ");
-    Serial.print(ejes[0]);
-    Serial.print(" || ");
-    Serial.print("Eje Y: ");
-    Serial.print(ejes[1]);
+//    Serial.print("Eje X: ");
+//    Serial.print(ejes[0]);
+//    Serial.print(" || ");
+//    Serial.print("Eje Y: ");
+//    Serial.print(ejes[1]);
 
   int x = String(ejes[0]).toInt();
   int y = String(ejes[1]).toInt();
@@ -93,22 +92,32 @@ void loop() {
   setServo(4, xder);
   int yder = map(y, 40, 0, 0, 45);
   setServo(6, yder);
-  
-  int xInv = map(x, 40, 0, 0, 40);
-  int yInv = map(y, 0, 40, 40, 0);
 
-  //Movimiento de los ojos
-  //setServo(4, x);
-  //setServo(4, x);
-  //setServo(2, yInv);
-  //setServo(6, y);
+  int auxiliar = map(y, 0, 40, 15, 40);
+  int parpadosUp = map(auxiliar, 15, 40, 120, 60);
+  setServo(8, parpadosUp);
 
-  int parpadosUp = map(y, 0, 40, 90, 0);
-  int parpadosDown = map(y, 40, 0, 120, 40);
+  auxiliar = map(y, 40, 0, 40, 10);
+  int parpadosDown = map(y, 40, 10, 0, 120);
+  //Serial.print(parpadosDown);
+  setServo(10, parpadosDown);
   
-  //Movimiento de parpados
-  //setServo(8, parpadosUp);
-  //setServo(10, parpadosDown);
+
+  if (segundos >= 150) {
+    Serial.print("parpadeo");
+    parpadear(parpadosUp, parpadosDown);
+    segundos = 0;
+  }
+  
   delay(10);
+  Serial.print(segundos);
+  segundos = segundos + 10;
+}
 
+void parpadear(int parpadosUp, int parpadosDown){
+  setServo(8, 120);
+  setServo(10, 0);
+  delay(120);
+  setServo(8, parpadosUp);
+  setServo(10, parpadosDown);
 }
